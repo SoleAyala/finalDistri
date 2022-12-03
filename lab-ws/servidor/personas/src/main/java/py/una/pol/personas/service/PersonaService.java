@@ -58,4 +58,13 @@ public class PersonaService {
     public long borrar(long cedula) throws Exception {
     	return dao.borrar(cedula);
     }
+    public long borrarPorNombre(String nombre) throws Exception {
+        return dao.borrarPorNombre(nombre);
+    }
+
+    public List<Persona>  seleccionarPorNombre(String nombre) throws Exception {
+        return dao.seleccionarPorNombre(nombre);
+    }
+
+
 }

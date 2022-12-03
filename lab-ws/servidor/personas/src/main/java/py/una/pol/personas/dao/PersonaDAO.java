@@ -221,6 +221,84 @@ public class PersonaDAO {
         }
         return id;
     }
-    
+
+
+    public List<Persona> seleccionarPorNombre(String nombre) {
+        String SQL = "SELECT cedula, nombre, apellido FROM persona WHERE nombre LIKE ? ";
+        Persona p = null;
+        List<Persona> result = new ArrayList<Persona>();
+        Connection conn = null;
+        try
+        {
+            conn = Bd.connect();
+            PreparedStatement pstmt = conn.prepareStatement(SQL);
+            pstmt.setString(1,"%"+ nombre+ "%");
+
+            ResultSet rs = pstmt.executeQuery();
+
+            while(rs.next()) {
+                p = new Persona();
+                p.setCedula(rs.getLong(1));
+                p.setNombre(rs.getString(2));
+                p.setApellido(rs.getString(3));
+                result.add(p);
+            }
+
+        } catch (SQLException ex) {
+            log.severe("Error en la seleccion: " + ex.getMessage());
+        }
+        finally  {
+            try{
+                conn.close();
+            }catch(Exception ef){
+                log.severe("No se pudo cerrar la conexion a BD: "+ ef.getMessage());
+            }
+        }
+        return result;
+
+    }
+
+
+    public long borrarPorNombre(String nombre) throws SQLException {
+
+        String SQL = "DELETE FROM persona WHERE nombre LIKE ? ";
+        long id = 0;
+        Connection conn = null;
+
+        try
+        {
+            conn = Bd.connect();
+            PreparedStatement pstmt = conn.prepareStatement(SQL);
+            pstmt.setString(1, "%"+ nombre+ "%");
+
+            int affectedRows = pstmt.executeUpdate();
+            // check the affected rows
+            if (affectedRows > 0) {
+                // get the ID back
+                try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        id = rs.getLong(1);
+                    }
+                } catch (SQLException ex) {
+                    log.severe("Error en la eliminación: " + ex.getMessage());
+                    throw ex;
+                }
+            }
+        } catch (SQLException ex) {
+            log.severe("Error en la eliminación: " + ex.getMessage());
+            throw ex;
+        }
+        finally  {
+            try{
+                conn.close();
+            }catch(Exception ef){
+                log.severe("No se pudo cerrar la conexion a BD: "+ ef.getMessage());
+                throw ef;
+            }
+        }
+        return id;
+    }
+
+
 
 }

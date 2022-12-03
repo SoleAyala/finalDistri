@@ -33,3 +33,6 @@ public class JaxRsActivator extends Application {
     /* class body intentionally left blank */
 
 }
+
+//http://localhost:8080/personas/rest
+

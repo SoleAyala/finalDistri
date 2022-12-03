@@ -121,7 +121,7 @@ public class PersonaRESTService {
         return builder.build();
     }
 
-   @DELETE
+   /*@DELETE
    //@Path("/{cedula}")
    public Response borrar(@QueryParam("cedula") long cedula)
    {      
@@ -150,6 +150,36 @@ public class PersonaRESTService {
            builder = Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
        }
        return builder.build();
-   }
+   }*/
+
+    @DELETE
+    //@Path("/{nombre}")
+    public Response borrarNombre(@QueryParam("nombre") String nombre)
+    {
+        Response.ResponseBuilder builder = null;
+        try {
+
+            if(personaService.seleccionarPorNombre(nombre) == null) {
+
+                builder = Response.status(Response.Status.NOT_ACCEPTABLE).entity("Persona no existe.");
+            }else {
+
+                personaService.borrarPorNombre(nombre);
+                builder = Response.status(202).entity("Persona borrada exitosamente.");
+            }
+
+        } catch (SQLException e) {
+            // Handle the unique constrain violation
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("bd-error", e.getLocalizedMessage());
+            builder = Response.status(Response.Status.CONFLICT).entity(responseObj);
+        } catch (Exception e) {
+            // Handle generic exceptions
+            Map<String, String> responseObj = new HashMap<>();
+            responseObj.put("error", e.getMessage());
+            builder = Response.status(Response.Status.BAD_REQUEST).entity(responseObj);
+        }
+        return builder.build();
+    }
    
 }
